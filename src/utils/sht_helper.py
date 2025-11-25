@@ -2,44 +2,44 @@ import jax.numpy as jnp
 import numpy as np
 def resize_flm(flm, target_L):
     """
-    将球谐系数从带限Lbian   到目标带限target_L
+    resize the flm from L to target_L
     
     Args:
-        flm: 原始球谐系数，形状为(L, 2L-1, d)
-        target_L: 目标带限
+        flm: the original flm, shape: (L, 2L-1, d)
+        target_L: the target bandlimit
         
     Returns:
-        扩展后的球谐系数，形状为(target_L, 2*target_L-1, d)
+        the resized flm, shape: (target_L, 2*target_L-1, d)
     """
     L = flm.shape[0]
     d = flm.shape[2] if len(flm.shape) > 2 else 1
     
-    # 创建目标尺寸的零数组
+    # create the zero array with the target size
     resized_flm = jnp.zeros((target_L, 2*target_L-1, d), dtype=flm.dtype)
     
-    # 计算m值的中心位置（在新数组中）
+    # calculate the center position of m in the new array
     center_new = target_L - 1
     center_old = L - 1
     if L < target_L:
-    # 复制原始系数
+    # copy the original coefficients
         for ell in range(L):
-            # m的范围是[-ell, ell]
-            m_start = center_old - ell  # 原始数组中的起始索引
-            m_end = center_old + ell + 1  # 原始数组中的结束索引
+            # the range of m is [-ell, ell]
+            m_start = center_old - ell  # the start index in the original array
+            m_end = center_old + ell + 1  # the end index in the original array
             
-            # 新数组中的对应位置
+            # the corresponding position in the new array
             new_m_start = center_new - ell
             new_m_end = center_new + ell + 1
             
             resized_flm = resized_flm.at[ell, new_m_start:new_m_end].set(flm[ell, m_start:m_end])
     else:
-        # 缩小球谐系数
+        # resize the flm
         for ell in range(target_L):
-            # m的范围是[-ell, ell]
-            m_start = center_old - ell  # 原始数组中的起始索引
-            m_end = center_old + ell + 1  # 原始数组中的结束索引
+            # the range of m is [-ell, ell]
+            m_start = center_old - ell  # the start index in the original array
+            m_end = center_old + ell + 1  # the end index in the original array
             
-            # 新数组中的对应位置
+            # the corresponding position in the new array
             new_m_start = center_new - ell
             new_m_end = center_new + ell + 1
             
@@ -51,14 +51,14 @@ def resize_flm(flm, target_L):
 
 def Legendre_Polynomial(x, L):
     """
-    计算Legendre多项式
+    calculate the Legendre polynomial
     
     Args:
-        x: 输入值
-        L: 多项式阶数
+        x: the input value
+        L: the polynomial order
         
     Returns:
-        计算结果
+        the result
     """
 
     if L == 0:
@@ -70,14 +70,14 @@ def Legendre_Polynomial(x, L):
 
 def Legendre_Polynomial_Derivative(x, L):
     """
-    计算Legendre多项式的导数
+    calculate the derivative of the Legendre polynomial
     
     Args:
-        x: 输入值
-        L: 多项式阶数
+        x: the input value
+        L: the polynomial order
         
     Returns:
-        计算结果
+        the result
     """
 
     if L == 0:
@@ -88,6 +88,13 @@ def Legendre_Polynomial_Derivative(x, L):
         return (L/x)*Legendre_Polynomial(x, L-1) - ((L-1)/x)*Legendre_Polynomial(x, L-2)
 
 def infer_L_from_shape(x, sampling):
+    """
+    infer the bandlimit from the shape of the input x ()
+    
+    Args:
+        x: the input
+        sampling: the sampling method
+    """
     if sampling == "dh":
         return x.shape[0] // 2
     else:  # mw, mwss

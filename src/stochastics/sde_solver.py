@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from typing import Tuple, Optional
 from src.stochastics.sde import SDE
 from functools import partial
-# class SDESolver(ABC):
 
 class SDESolver(ABC):
     @abstractmethod
@@ -44,13 +43,7 @@ class EulerMaruyama(SDESolver):
             x, key = carry
             key, subkey = jrandom.split(key)
             subkey = jrandom.split(subkey, self.noise_size) # noise size normally is same as the x0 resolution, but not necessarily
-            # print("subkey.shape: ", subkey.shape)
-            # dW = jax.vmap(lambda key: jrandom.normal(key, (self.dim,)) * jnp.sqrt(self.dt), in_axes=(0))(subkey)
             dW = jax.vmap(lambda key: jrandom.normal(key, (self.dim,)) * jnp.sqrt(self.dt), in_axes=(0))(subkey)
-            # dW = dW.reshape(self.noise_size, self.dim)
-            # dW = jrandom.multivariate_normal(subkey, jnp.zeros(self.dim), jnp.eye(self.dim)) * jnp.sqrt(self.dt)
-            # dW = jrandom.multivariate_normal(subkey[0], jnp.zeros(self.dim), jnp.eye(self.dim)) * jnp.sqrt(self.dt)
-            # check the dimension of x, if x is 2D manifold, then we need to reshape x to 3D
             if self.condition_x is not None:
                 drift = self.drift_fn(x,t, self.condition_x)    
             else:
@@ -72,7 +65,6 @@ class EulerMaruyama(SDESolver):
             return (x_next, key), (x_next, diffusion)
 
         times = jnp.linspace(0, self.total_time, self.num_steps + 1)
-        # times = jnp.linspace(0, self.total_time, self.num_steps)
         _, (trajectory, diffusion_history) = jax.lax.scan(step, (x0, rng_key), times[:-1])
         return jnp.concatenate([x0[None, ...], trajectory], axis=0), diffusion_history
     

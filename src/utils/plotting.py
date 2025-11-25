@@ -343,14 +343,14 @@ import numpy as np
 
 def visualize_score_field_over_time(score_lst, positions, dt=0.01, scale=0.3, radius=1.0):
     """
-    用 Polyscope 可视化单位球上的 score 向量场，随时间变化。
+    visualize the score vector field on the sphere with Polyscope, change with time.
 
     Args:
-        score_lst: (T, n_lat, n_lon, 3)，每一帧的向量场
-        positions: (T, n_lat, n_lon, 3)，对应每一帧的球面点位置
-        dt: 时间步长
-        scale: 向量缩放比例
-        radius: 背景球半径
+        score_lst: (T, n_lat, n_lon, 3), the vector field of each frame
+        positions: (T, n_lat, n_lon, 3), the position of the points on the sphere for each frame
+        dt: time step
+        scale: the scale of the vector
+        radius: background sphere radius
     """
     ps.init()
     ps.remove_all_structures()
@@ -369,7 +369,7 @@ def visualize_score_field_over_time(score_lst, positions, dt=0.01, scale=0.3, ra
         pc.set_radius(0.005)
         pc.add_vector_quantity("score", vecs * scale, enabled=True)
 
-        # # 添加背景球
+        # # add the background sphere
         # u = np.linspace(0, 2 * np.pi, 40)
         # v = np.linspace(0, np.pi, 20)
         # x = radius * np.outer(np.cos(u), np.sin(v))
@@ -448,7 +448,7 @@ def visualize_score_field_with_regions(score_lst, positions, dt=0.01, scale=0.3,
         # bg.set_color((0.8, 0.8, 0.8))
         # bg.set_transparency(0.95)
 
-        # === 坐标轴 ===
+        # add the coordinate axes
         axis_length = 1.5
         x_axis = np.array([[0, 0, 0], [axis_length, 0, 0]])
         y_axis = np.array([[0, 0, 0], [0, axis_length, 0]])
@@ -471,38 +471,15 @@ def visualize_score_field_with_regions(score_lst, positions, dt=0.01, scale=0.3,
     ps.set_user_callback(callback)
     ps.show()
 
-
-# def plot_time_slice_shape(x0_eval, xT_eval, xt):
-#     cmap = plt.get_cmap("autumn")
-#     fig, axs = plt.subplots(1, 6, subplot_kw={'projection': '3d'}, figsize=(12, 4))
-
-#     axs[0].plot_wireframe(x0_eval[:, :, 0], x0_eval[:, :, 1], x0_eval[:, :, 2], alpha=0.2, color="red", label=r"$x_0$")
-#     axs[0].plot_wireframe(xT_eval[:, :, 0], xT_eval[:, :, 1], xT_eval[:, :, 2], alpha=0.2, color="blue", label=r"$x_T$")
-#     axs[0].grid(False)
-#     axs[0].set_axis_off()
-
-#     for j in range(1, 6):
-#         x = xt[j*10-1]
-#         axs[j].plot_wireframe(x0_eval[:, :, 0], x0_eval[:, :, 1], x0_eval[:, :, 2], alpha=0.05, color="red", label=r"$x_0$")
-#         axs[j].plot_surface(x[:, :, 0], x[:, :, 1], x[:, :, 2], alpha=0.7, cmap=cmap, label=r"$y_t$", antialiased=True, shade=True, rstride=1, cstride=1)
-#         axs[j].plot_wireframe(xT_eval[:, :, 0], xT_eval[:, :, 1], xT_eval[:, :, 2], alpha=0.05, color="blue", label=r"$v$")
-#         axs[j].grid(False)
-#         axs[j].set_axis_off()
-#         axs[j].dist = 8
-#         axs[j].elev = 20
-#         axs[j].azim = -60
-#     plt.show()
-#     plt.savefig("time_slice_shape_kunita_sphere.png")
-
 def plot_time_slice_shape(x0_eval, xT_eval, xt, ts=None):
     import matplotlib.pyplot as plt
 
     cmap = plt.get_cmap("autumn")
     fig, axs = plt.subplots(1, 6, subplot_kw={'projection': '3d'}, figsize=(12, 4))
 
-    # 时间点
+    # time points
     if ts is None:
-        ts = [0.0] + [0.1 * j for j in range(1, 6)]  # 默认时间点
+        ts = [0.0] + [0.1 * j for j in range(1, 6)]  # default time points
 
     axs[0].plot_wireframe(x0_eval[:, :, 0], x0_eval[:, :, 1], x0_eval[:, :, 2], alpha=0.2, color="red")
     axs[0].plot_wireframe(xT_eval[:, :, 0], xT_eval[:, :, 1], xT_eval[:, :, 2], alpha=0.2, color="blue")
@@ -522,7 +499,7 @@ def plot_time_slice_shape(x0_eval, xT_eval, xt, ts=None):
         axs[j].azim = -60
         axs[j].set_title(f"t = {ts[j]:.2f}", pad=10)
 
-    # 构造 legend
+    # construct the legend
     legend_elements = [
         Line2D([0], [0], color='red', lw=2, label=r'$x_0$'),
         Line2D([0], [0], color='blue', lw=2, label=r'$x_T$'),
@@ -531,6 +508,6 @@ def plot_time_slice_shape(x0_eval, xT_eval, xt, ts=None):
     fig.legend(handles=legend_elements, loc='upper center', ncol=3, bbox_to_anchor=(0.5, 1.05))
 
     plt.tight_layout()
-    plt.subplots_adjust(top=1.0)  # 给 legend 留空间
+    plt.subplots_adjust(top=1.0)  # leave space for the legend
     plt.savefig("time_slice_shape_kunita_sphere.png", dpi=300)
     plt.show()

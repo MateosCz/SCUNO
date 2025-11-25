@@ -111,7 +111,7 @@ class NeuralOpTrainer(Trainer):
         """Initialize training state for neural operator model
         
         Args:
-            model: Neural operator model (CTUNO1D or CTUNO2D)
+            model: Neural operator model (SCUNO)
             lr: Learning rate for optimizer
             model_kwargs: Dictionary containing:
                 - x: Input data tensor
@@ -173,27 +173,6 @@ class NeuralOpTrainer(Trainer):
             return loss
 
         loss, grads = jax.value_and_grad(loss_fn)(train_state.params)
-        # grad_norm = jnp.sqrt(sum(jnp.sum(jnp.square(g)) for g in jax.tree_util.tree_leaves(grads)))
-        # debug.print(f"Gradient norm: {grad_norm}")
-        # for layer_name, layer_params in jax.tree_util.tree_leaves_with_path(grads):
-        #     param_path = '/'.join(str(p) for p in layer_name)
-            
-        #     # 如果是叶子节点（实际参数）
-        #     if not isinstance(layer_params, dict):
-        #         grad_norm = jnp.linalg.norm(layer_params)
-        #         grad_mean = jnp.mean(layer_params)
-        #         grad_max = jnp.max(jnp.abs(layer_params))
-        #         nan_check_arrays = [jnp.isnan(g) | jnp.isinf(g) for g in layer_params]
-        #         has_nan_or_inf = jnp.any(jnp.stack(nan_check_arrays))
-        #         debug.print(
-        #             "Layer: {path}, Shape: {shape}, Norm: {norm}, Mean: {mean}, Max: {max}, Has NaN or Inf: {has_nan_or_inf}", 
-        #             path=param_path,
-        #             shape=layer_params.shape, 
-        #             norm=grad_norm, 
-        #             mean=grad_mean,
-        #             max=grad_max,
-        #             has_nan_or_inf=has_nan_or_inf
-        #         )
         train_state = train_state.apply_gradients(grads=grads)
         return train_state, loss
 

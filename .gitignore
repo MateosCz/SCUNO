@@ -1,12 +1,33 @@
-# ignore all files in the /data directory
-data/*
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
 
-# ignore all files in the /logs directory
-logs/*
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# ignore all files with .png extension
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# Project Specific
+logs/
+checkpoints/
 *.png
-
-# ignore all files with .jpg extension
 *.jpg
-
+*.svg
+imgui.ini
+# ignore all files with .Identifier extension
+*.Identifier

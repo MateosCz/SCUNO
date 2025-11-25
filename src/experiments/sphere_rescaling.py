@@ -24,7 +24,7 @@ import polyscope as ps
 import src.training.trainer as Trainer
 import matplotlib.pyplot as plt
 from src.utils.plotting import plot_trajectory_3d_polyscope, plot_trajectory_3d, visualize_score_field_with_regions, plot_time_slice_shape
-from src.models.neural_operator import CTShapeSFNO
+from src.models.neural_operator import SCUNO
 import open3d as o3d
 from flax.training import checkpoints
 def get_random_int():
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     
     if not draw_unconditional:
-        model = CTShapeSFNO(x_feature_dim=3, l_list=(8,8), lift_dim=16, latent_feature_dims=(2,2), sampling="gl", activation="gelu")
+        model = SCUNO(x_feature_dim=3, l_list=(8,8), lift_dim=16, latent_feature_dims=(2,2), sampling="gl", activation="gelu")
         trainer = Trainer.NeuralOpTrainer(seed=get_random_int(), landmark_num=in_grid_L)
 
         checkpoint_path = project_root() + '/checkpoints/sphere_model'
@@ -130,10 +130,6 @@ if __name__ == "__main__":
     x0 = np.array(x0)
     xT = np.array(xT)
     
-
-    # plot_trajectory_3d(condition_xs, "reverse_trajectory_finite" + "k_alpha=1.6" + "k_sigma=0.4" + "grid_num=10" + "grid_range=[-1,1]", simplified=False, perspective='x')
-    # plot_trajectory_3d(condition_xs, "reverse_trajectory_finite" + "k_alpha=1.6" + "k_sigma=0.4" + "grid_num=10" + "grid_range=[-1,1]", simplified=False, perspective='z')
-    # plot_trajectory_3d(condition_xs, "reverse_trajectory_finite" + "k_alpha=1.6" + "k_sigma=0.4" + "grid_num=10" + "grid_range=[-1,1]", simplified=False, perspective='y')
 
      
 
