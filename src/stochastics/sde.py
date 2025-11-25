@@ -34,7 +34,7 @@ class Time_Reversed_SDE_2Dmanifold_Yang(SDE):
         return jax.vmap(div_sigma_single)(x)
 
     def drift_fn(self, x, t, x0):
-        jax.debug.print("score_fn: {0}", self.score_fn(x, self.total_time - t + self.dt, x0))
+        # jax.debug.print("score_fn: {0}", self.score_fn(x, self.total_time - t + self.dt, x0))
         def drift_fn_impl(x,t, x0):
             score_cond = self.score_fn(x, self.total_time - t + self.dt, x0)
             drift = -self.original_sde.drift_fn(x, self.total_time - t + self.dt) + score_cond
@@ -87,8 +87,8 @@ class Kunita_Flow_SDE_3D_Eulerian_2Dmanifold_distance(SDE):
             # define the kernel function
             kernel_fn = lambda x, y: self.k_alpha * jnp.exp(-0.5 * jnp.linalg.norm(x - y, axis=-1) ** 2 / self.k_sigma ** 2)
             # compute the kernel matrix
-            print(self.grid.shape)
-            print(x.shape)
+            # print(self.grid.shape)
+            # print(x.shape)
             Q_half = jax.vmap(jax.vmap(jax.vmap(kernel_fn, in_axes=(0, None)), in_axes=(None, 0)), in_axes=(None, 0))(self.grid, x) * self.d_grid
 
             # the integral(simulated) happens when we do the matrix multiplication in the sde solver, so here we just return the kernel matrix

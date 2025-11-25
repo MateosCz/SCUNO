@@ -27,7 +27,7 @@ class S2ManifoldDataGenerator(DataGenerator):
     def __init__(self, sampling: str = "gl", manifold_type: str = "sphere", 
                  radius: float = 1.0, height: float = 2.0, minor_radius: float = 0.5, 
                  major_radius: float = 2.0, width: float = 0.5, center: jnp.ndarray = jnp.array([0.0, 0.0, 0.0]), flatten: bool = False, seed=0, randomization: bool = False, epsilon1: float = 1.0, epsilon2: float = 1.0, a: float = 1.0, b: float = 1.0, c: float = 1.0, 
-                 A: float = 0.3, n: int = 4, m: int = 5):
+                 A: float = 0.3, n: int = 4, m: int = 5, file_path: str = None, scale: float = 1.0, src_type: str = 'pcd', normalize: bool = True, healpix: bool = False):
         """
         Initialize the data generator.
         
@@ -53,6 +53,9 @@ class S2ManifoldDataGenerator(DataGenerator):
         self.A = A
         self.n = n
         self.m = m
+        self.file_path = file_path
+        self.scale = scale
+        self.src_type = src_type
     def generate_sampling_grid(self, L, sampling='mw'):
         """
         Generate angular sampling grid based on the requested scheme.
@@ -329,6 +332,8 @@ class S2ManifoldDataGenerator(DataGenerator):
             points = self.superellipsoid(theta_grid, phi_grid, self.a, self.b, self.c, self.epsilon1, self.epsilon2, self.center)
         elif self.manifold_type == 'bump_sphere':
             points = self.bump_sphere(theta_grid, phi_grid, self.radius, self.A, self.n, self.m, self.center)
+        elif self.manifold_type == 'real_data':
+            points = self.real_data(theta_grid, phi_grid, self.center, self.file_path, self.scale, self.src_type)
         else:
             raise ValueError(f"Unsupported manifold type: {self.manifold_type}")
             
