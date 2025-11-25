@@ -47,7 +47,7 @@ This project selects sampling methods based on those supported by `S2FFT`. Curre
 
 ### Clone the repository
 ```bash
-git clone A
+git clone https://github.com/MateosCz/SCUNO.git
 cd SCUNO
 ```
 ### Environment Setup
